@@ -29,7 +29,7 @@ const Box = styled.div`
     font-weight: 700;
     color: #333333;
   }
-  .hr {
+  hr {
     margin-top: 12px;
     margin-bottom: 8px;
     border-color: transparent;
@@ -55,6 +55,8 @@ const Box = styled.div`
       border-radius: 10000px;
       background-color: #6F92BB;
     }
+
+    
 `;
 
 
