@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, { useState, useEffect } from "react";
 import MainGrid from "../src/components/MainGrid";
 import Box from "../src/components/Box";
 import {
@@ -10,7 +10,7 @@ import { ProfileRelationsBoxWrapper } from "../src/components/ProfileRelations";
 
 function ProfileSideBar(props) {
   return (
-    <Box as="aside" >
+    <Box as="aside">
       <img
         src={`https://github.com/${props.userGitHub}.png`}
         style={{ borderRadius: "12px" }}
@@ -30,14 +30,34 @@ function ProfileSideBar(props) {
   );
 }
 
-export default function Home() {
 
-  
-  const [comunidades, setComunidades] = useState([{
-    id: '185185181818185151218548515484',
-    title: 'Eu odeio acordar cedo',
-    image: 'https://alurakut.vercel.app/capa-comunidade-01.jpg',    
-  }]);
+
+
+function ProfileRelationsBox(props) {
+  console.log('Cidão do posto',props.items)
+  return (
+    <ProfileRelationsBoxWrapper>
+      <h2 className="smallTitle">
+        {props.title} ({props.items.length})
+      </h2>
+      <ul>
+      {/* {seguidores.map((props) => {
+        return (
+          <li key={props}>
+            <a href={`https://github.com/${props}.png`}>
+              <img src={props} />
+              <span>{props}</span>
+            </a>
+          </li>
+        );
+      })} */}
+    </ul>
+    </ProfileRelationsBoxWrapper>
+  );
+}
+
+export default function Home() {
+  const [comunidades, setComunidades] = useState([]);
 
   const githubUser = "LFelpsDev";
   const favoriteUsersGitHub = [
@@ -47,9 +67,52 @@ export default function Home() {
     "MailoDev",
     "Rafaelalmendra",
     "juliateles22",
-    "juliateles22",
-    "Diego3k",
+    "LFelpsDev"
   ];
+  const [seguidores, setSeguidores] = useState([]);
+  // 0 Pegar o array de dados do GitHub
+
+  useEffect(() => {
+    // GET
+
+    fetch("https://api.github.com/users/LFelpsDev/followers")
+      .then(function (respostaDoServidor) {
+        return respostaDoServidor.json();
+      })
+      .then(function (respostaCompleta) {
+        setSeguidores(respostaCompleta);
+        // console.log(respostaCompleta)
+      });
+
+    // API GraphQL
+    fetch('https://graphql.datocms.com/', {
+      method: 'POST',
+      headers: {
+        'Authorization': '4c5db656ecee7fb63fd581c6643483',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({ "query": `query {
+        allCommunities {
+          id
+          title
+          imageUrl
+          creatorSlug
+        }
+      }` })
+    })
+      .then((response) => response.json()) // Pega o retorno do response.json() e já retorna
+      .then((respostaCompleta) => {
+
+        const comunidadesVindasDoDato = respostaCompleta.data.allCommunities;
+          
+          console.log(comunidadesVindasDoDato);
+
+          setComunidades(comunidadesVindasDoDato);
+      });
+  }, []);
+
+  // 1 - Criar um Box Para que vai ter um map, baseado nos items do array que pegamos do GitHub
 
   return (
     <>
@@ -70,18 +133,32 @@ export default function Home() {
             <form
               onSubmit={(event) => {
                 event.preventDefault();
-                const dadosDoForm = new FormData(event.target)
+                const dadosDoForm = new FormData(event.target);
 
-                console.log('Campo', dadosDoForm.get('title'));
-                console.log('Campo', dadosDoForm.get('image'));
-
+           
                 const comunidade = {
-                  id: new Date().toISOString(),
-                  title: dadosDoForm.get('title'),
-                  image: dadosDoForm.get('image'),
-                }
-                const comunidadesAtualizadas =  [...comunidades, comunidade];
-                setComunidades(comunidadesAtualizadas);
+                  title: dadosDoForm.get("title"),
+                  imageUrl: dadosDoForm.get("image"),
+                  creatorSlug: githubUser,
+                };
+
+
+                fetch('./api/comunidades', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(comunidade)
+                })
+                .then(async (response) => {
+                  const dados = await response.json()
+                  const comunidade = dados.registroCriado
+                  const comunidadesAtualizadas = [...comunidades, comunidade];
+                  setComunidades(comunidadesAtualizadas);
+                })
+               
+                
+               
               }}
             >
               <div>
@@ -105,22 +182,24 @@ export default function Home() {
           </Box>
         </div>
 
-       <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>
-          {/* <ProfileRelationsBox title="Seguidores" items={seguidores} /> */}
+        <div
+          className="profileRelationsArea"
+          style={{ gridArea: "profileRelationsArea" }}
+        >
+          <ProfileRelationsBox items={seguidores} title="Seguidores" />
+
           <ProfileRelationsBoxWrapper>
-            <h2 className="smallTitle">
-              Comunidades ({comunidades.length})
-            </h2>
+            <h2 className="smallTitle">Comunidades ({comunidades.length})</h2>
             <ul>
               {comunidades.map((props) => {
                 return (
                   <li key={props.id}>
                     <a href={`/users/${props.title}`}>
-                      <img src={props.image} />
+                      <img src={props.imageUrl} />
                       <span>{props.title}</span>
                     </a>
                   </li>
-                )
+                );
               })}
             </ul>
           </ProfileRelationsBoxWrapper>
@@ -134,11 +213,13 @@ export default function Home() {
                 return (
                   <li key={favoriteUsersGitHub}>
                     <a href={`https://github.com/${favoriteUsersGitHub}`}>
-                      <img src={`https://github.com/${favoriteUsersGitHub}.png`} />
+                      <img
+                        src={`https://github.com/${favoriteUsersGitHub}.png`}
+                      />
                       <span>{favoriteUsersGitHub}</span>
                     </a>
                   </li>
-                )
+                );
               })}
             </ul>
           </ProfileRelationsBoxWrapper>

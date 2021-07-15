@@ -10,8 +10,12 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    background-color: #D9E6F6;
+    background-image: url('https://abglt.org.br/wp-content/uploads/2020/10/wallpaper-pc1-scaled.jpg');
     font-family: sans-serif;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    height: 100vh;
   }
 
   #_next {
