@@ -32,6 +32,10 @@
 - Consumir API Criadas "MANUALMENTE"
 - Entendimento Sobre a Diferença em React com Next.
 - Aumentando o Entendimento dos Principais Conceitos do React, Props, Component, State. 
+- Criação de Pagina De Login
+- Consegui Realizar os Desafio Aplicados Durante o Evento.
+- Conceitos sobre o Dato Cms
+- Adicionei Novas Funcionalidades e tambem algumas regras de exibição.
 
 ---
 
