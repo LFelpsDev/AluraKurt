@@ -39,7 +39,7 @@ export function AlurakutMenu({ githubUser, image }) {
         </nav>
 
         <nav>
-          <a href={`/logout`}>Sair</a>
+          <a href={`/login`}>Sair</a>
           <div>
             <input placeholder="Pesquisar no Orkut" />
           </div>
@@ -465,6 +465,13 @@ const AlurakutLoginScreen = css`
           color: var(--textSecondaryColor);
         }
       }
+    }
+    img {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 10px;
+      margin-top: 10px;
+      border-radius: 20px;
     }
     .footerArea {
       grid-area: footerArea;

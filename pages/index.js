@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import nookies from "nookies"
+import jwt from 'jsonwebtoken'
 import MainGrid from "../src/components/MainGrid";
 import Box from "../src/components/Box";
 import {
@@ -33,33 +35,34 @@ function ProfileSideBar(props) {
 
 
 
-function ProfileRelationsBox(props) {
-  console.log('Cidão do posto',props.items)
+function ProfileRelationsBox({items, title, children}) {
   return (
     <ProfileRelationsBoxWrapper>
       <h2 className="smallTitle">
-        {props.title} ({props.items.length})
+        {title} ({items.length})
       </h2>
       <ul>
-      {/* {seguidores.map((props) => {
+      {items.map((user) => {
         return (
-          <li key={props}>
-            <a href={`https://github.com/${props}.png`}>
-              <img src={props} />
-              <span>{props}</span>
+          <li key={user.id}>
+            <a href={`https://github.com/${user.login}`}>
+              <img src={user.avatar_url} alt={user.login}/>
+              <span>{user.login}</span>
             </a>
           </li>
         );
-      })} */}
+      })}
     </ul>
     </ProfileRelationsBoxWrapper>
   );
 }
 
-export default function Home() {
+export default function Home(props) {
+  const githubUser = props.githubUser;
   const [comunidades, setComunidades] = useState([]);
+  
+  
 
-  const githubUser = "LFelpsDev";
   const favoriteUsersGitHub = [
     "pfillipi",
     "marlonelima",
@@ -81,7 +84,7 @@ export default function Home() {
       })
       .then(function (respostaCompleta) {
         setSeguidores(respostaCompleta);
-        // console.log(respostaCompleta)
+        console.log('Resposta COmpleta',respostaCompleta)
       });
 
     // API GraphQL
@@ -124,7 +127,8 @@ export default function Home() {
 
         <div className="welcomeArea" style={{ gridArea: "welcomeArea" }}>
           <Box>
-            <h1 className="title">Bem Vindo(a)</h1>
+            <h1 className="title">Bem Vindo(a) </h1>
+            @{githubUser} 
             <OrkutNostalgicIconSet />
           </Box>
 
@@ -227,4 +231,35 @@ export default function Home() {
       </MainGrid>
     </>
   );
+}
+
+export async function getServerSideProps(context){
+
+  const cookies = nookies.get(context)
+  const token = cookies.USER_TOKEN;
+  const { githubUser } = jwt.decode(token)
+
+
+
+  const { isAuthenticated } =  await fetch('https://alurakut.vercel.app/api/auth', {
+    headers: {
+      Authorization: token,
+    }
+  })
+  .then((resposta) => resposta.json())
+  
+  if(!isAuthenticated) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      }
+    }
+  }
+ 
+  return {
+    props: {
+      githubUser
+    },
+  }
 }
