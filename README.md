@@ -24,6 +24,28 @@
 - GraphQL
 
 ---
+<table align="center">
+    <tr>
+        <td align="center">
+            <a href="">
+                <img src="https://user-images.githubusercontent.com/78617974/126019084-c82af313-68a5-41d2-9aac-53985a3703bb.gif" width="1100px;" />
+                <br />
+            </a>
+        </td>    
+    </tr>
+</table>
+<table align="center">
+    <tr>
+        <td align="center">
+            <a href="">
+                <img src="https://user-images.githubusercontent.com/78617974/126019087-d92b270b-596a-47e4-a334-401dba4b8476.gif" width="1100px;" />
+                <br />
+            </a>
+        </td>    
+    </tr>
+</table>
+
+
 
 ---
 # Aprendizados Que Eu Tive: 💻
